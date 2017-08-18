@@ -1,4 +1,4 @@
-mkdir /root/ca/intermediate;
+mkdir -p /root/ca/intermediate;
 cp cnf/intermediate-ca /root/ca/intermediate/openssl.cnf
 cd /root/ca/intermediate;
 mkdir certs crl csr newcerts private;
@@ -8,8 +8,11 @@ echo 1000 > serial;
 echo 1000 > /root/ca/intermediate/crlnumber;
 cd /root/ca;
 openssl genrsa -aes256 \
-      -out intermediate/private/intermediate.key.pem 4096;
-chmod 400 intermediate/private/intermediate.key.pem;
+      -out intermediate/private/intermediate.key-pass.pem 4096;
+chmod 400 intermediate/private/intermediate.key-pass.pem;
+# remove password
+echo "input password to remove password from private key"
+openssl rsa -in intermediate/private/intermediate.key-pass.pem -out intermediate/private/intermediate.key.pem
 openssl req -config intermediate/openssl.cnf -new -sha256 \
       -key intermediate/private/intermediate.key.pem \
       -out intermediate/csr/intermediate.csr.pem;
